@@ -1,0 +1,5 @@
+Data Insights:
+                - Total Sales: $12553.17
+                - Furniture is the leading category by sales: $6930.67
+                - The East region generated the highest sales reaching $3524.77
+                - The Consumer segment generated the highest sales with $8502.57.
