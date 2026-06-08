@@ -1,5 +1,3 @@
-from idlelib.zoomheight import set_window_geometry
-
 import matplotlib.pyplot as plt
 import logging as log
 import pandas as pd
@@ -33,16 +31,13 @@ class Cleaner():
 
 
     def cleaning_data(self):
-        # Cleaning Column
         self.df.columns = self.df.columns.str.strip() # This removes the spacng from sides
         self.df.columns = self.df.columns.str.lower().str.replace(" ","-") # this adds the '-' on the column name if there is a space
 
-        # Removing duplicates
         self.df = self.df.drop_duplicates(subset=["order-id"])
 
         self.df["order-date"] = pd.to_datetime(self.df["order-date"],  format="%d/%m/%Y", dayfirst=True)
         self.df["ship-date"] = pd.to_datetime(self.df["ship-date"],   format="%d/%m/%Y", dayfirst=True)
-
 
 
     def get_after_insights(self):
@@ -57,27 +52,27 @@ class Cleaner():
         return self.after_cleaning
 
 
-    def graph_analysis(self):
+    def generate_graphs_and_insights(self):
         sales_by_subcatagory = self.df.groupby("category")["sales"].sum().sort_values(ascending=False).head()
         sales_by_subcatagory.plot(kind="barh", color="green")
         plt.title("Top 5 Category By Sales")
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.savefig("graph/top_category_by_sales_chart.png")
+        plt.savefig("charts/top_category_by_sales_chart.png")
 
         top_regions_by_sales =  self.df.groupby("region")["sales"].sum().sort_values(ascending=False).head()
         top_regions_by_sales.plot(kind="barh", color="green")
         plt.title("Top 5 Category By Sales")
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.savefig("graph/top_regions_by_sales_chart.png")
+        plt.savefig("charts/top_regions_by_sales_chart.png")
 
         top_subcategory_by_sales =  self.df.groupby("sub-category")["sales"].sum().sort_values(ascending=False).head()
         top_subcategory_by_sales.plot(kind="barh", color="green")
         plt.title("Top 5 Category By Sales")
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.savefig("graph/top_subcategory_by_sales_chart.png")
+        plt.savefig("charts/top_subcategory_by_sales_chart.png")
         plt.close()
 
         self.df["year"] = self.df["order-date"].dt.to_period("Y")
@@ -86,20 +81,20 @@ class Cleaner():
         plt.title("Total Sales per Year")
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.savefig("graph/yearly sales.png")
+        plt.savefig("charts/yearly_sales.png")
 
         segments = self.df.groupby("segment")["sales"].sum()
         segments.plot(kind="pie", autopct="%1.1f%%")
         plt.title("Sales by Customer Segment")
         plt.tight_layout()
-        plt.savefig("graph/segment_pie.png")
+        plt.savefig("charts/segment_pie.png")
         plt.close()
 
         self.df["ship-mode"].value_counts().plot(kind="bar", color="purple")
         plt.title("Orders by Shipping Mode (Which shipping mode is most used)")
-        plt.xticks(rotation=45)
+        plt.xticks(rotation=30)
         plt.tight_layout()
-        plt.savefig("graph/ship_mode.png")
+        plt.savefig("charts/ship_mode.png")
 
 
         leading_category_name = sales_by_subcatagory.idxmax()
@@ -107,7 +102,6 @@ class Cleaner():
 
         top_region_name = top_regions_by_sales.idxmax()
         top_region_sales = top_regions_by_sales.max().round(2)
-
 
         top_segment_name = segments.idxmax()
         top_segment_sales = segments.max().round(2)
@@ -129,7 +123,7 @@ def main():
     c.cleaning_data()
     c.get_after_insights()
     c.df.to_csv("cleaned_superstore.csv", index=False)
-    c.graph_analysis()
+    c.generate_graphs_and_insights()
 
 
 
